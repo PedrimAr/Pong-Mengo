@@ -1,6 +1,7 @@
 # Início:
 
 # 1. Importações:
+# Link para download do PPlay: http://www2.ic.uff.br/pplay/
 from PPlay.window import *
 from PPlay.gameimage import *
 
