@@ -1,7 +1,6 @@
 # Início:
 
 # 1. Importações:
-# Link para download do PPlay: http://www2.ic.uff.br/pplay/
 from PPlay.window import *
 from PPlay.gameimage import *
 
@@ -27,8 +26,8 @@ raqueteDir.x = janela.width - raqueteDir.width
 raqueteDir.y = janela.height/2 - raqueteDir.height/2
 
 # Definição da variável de velocidade da bola
-velX = 0.2
-velY = 0.2
+velX = 0.75
+velY = 0.75
 
 # Game Loop:
 while True:
@@ -43,7 +42,7 @@ while True:
 
     # Colisão com a lateral dos pads (FUNCIONANDO)
     elif (bola.x >= raqueteDir.x - bola.width or bola.x <= raqueteEsq.width) and not (bola.y < raqueteDir.y + bola.height or bola.y > raqueteDir.y + raqueteDir.height or bola.y < raqueteEsq.y + bola.height or bola.y > raqueteEsq.y + raqueteDir.height):
-        velX *= -1
+        velX *= -1.1
 
     # Colisão com a parte de baixo dos pads (EM MANUTENÇÃO)
     '''
