@@ -9,57 +9,100 @@ from PPlay.gameimage import *
 # Tamanho da janela
 janela = Window(900, 600)
 
+# Estabelecendo input do teclado
+teclado = Window.get_keyboard()
+
 # Definição do cenário
 cenario = GameImage("imagens/gramado-maracana.webp")
 
 # Definição da bola e sua posição inicial
 bola = GameImage("imagens/bolaCBF.png")
-bola.x = janela.width/2 - bola.width/2
-bola.y = janela.height/2 - bola.height/2
+bolaX = janela.width/2 - bola.width/2
+bola.x = bolaX
+bolaY = janela.height/2 - bola.height/2
+bola.y = bolaY
 
 # Definição dos pads e suas posições
-raqueteEsq = GameImage("imagens/raqueteMengo.png")
-raqueteEsq.x = 0
-raqueteEsq.y = janela.height/2 - raqueteEsq.height/2
-raqueteDir = GameImage("imagens/raqueteMengo.png")
-raqueteDir.x = janela.width - raqueteDir.width
-raqueteDir.y = janela.height/2 - raqueteDir.height/2
+padEsq = GameImage("imagens/padMengo.png")
+padEsqX = 10
+padEsq.x = padEsqX
+padEsqY = janela.height / 2 - padEsq.height / 2
+padEsq.y = padEsqY
+
+padDir = GameImage("imagens/padMengo.png")
+padDirX = janela.width - padDir.width - 10
+padDir.x = padDirX
+padDirY = janela.height / 2 - padDir.height / 2
+padDir.y = padDirY
 
 # Definição da variável de velocidade da bola
-velX = 0.75
-velY = 0.75
+velX = 1
+velY = 1
+
+count = 0
+
+pause = True
 
 # Game Loop:
 while True:
 
-    # Colisão da bola com as paredes laterais
-    if bola.x >= janela.width - bola.width or bola.x <= 0:
-        velX *= -1
+    # Movimentação do pad do player
+    if teclado.key_pressed("w") and padEsq.y >= 0:
+        padEsq.y -= 1
+    elif teclado.key_pressed("s") and padEsq.y + padEsq.height <= janela.height:
+        padEsq.y += 1
+
+    # Movimentação do pad automático
+    if velX > 0:
+        if velY > 0 and padDir. y + padDir.height <= janela.height:
+            padDir.y += 0.75
+        elif velY < 0 <= padDir.y:
+            padDir.y -= 0.75
+
+    # Gol
+    if bola.x > janela.width or bola.x < 0:
+        bola.x = bolaX
+        bola.y = bolaY
+        padEsq.y = padEsqY
+        padEsq.x = padEsqX
+        padDir.y = padDirY
+        padDir.x = padDirX
+        pause = True
+
+    # "Apito"
+    if teclado.key_pressed("space"):
+        pause = False
 
     # Colisão da bola com o teto/chão
-    elif bola.y >= janela.height - bola.height or bola.y <= 0:
+    if bola.y >= janela.height - bola.height or bola.y <= 0:
         velY *= -1
 
-    # Colisão com a lateral dos pads (FUNCIONANDO)
-    elif (bola.x >= raqueteDir.x - bola.width or bola.x <= raqueteEsq.width) and not (bola.y < raqueteDir.y + bola.height or bola.y > raqueteDir.y + raqueteDir.height or bola.y < raqueteEsq.y + bola.height or bola.y > raqueteEsq.y + raqueteDir.height):
-        velX *= -1.1
-
-    # Colisão com a parte de baixo dos pads (EM MANUTENÇÃO)
     '''
+    # Colisão com a parte de baixo dos pads (EM MANUTENÇÃO)
     elif (bola.y <= raqueteEsq.y - bola.height or bola.y <= raqueteDir.y - bola.height) or (bola.y >= raqueteEsq.y + 
     raqueteEsq.height or bola.y >= raqueteDir.y + raqueteDir.height) and not (raqueteEsq.x + raqueteDir.width < bola.x < 
     raqueteDir.x - bola.width):
         velY *= -1
     '''
 
+    # Colisão da bola com as laterais dos pads
+    if bola.collided(padEsq) or bola.collided(padDir):
+        count += 1
+        if count <= 15:
+            velY *= -1.05
+            velX *= 1.05
+        else:
+            velX *= -1
+
     # Aceleração da bola
-    bola.x += velX
-    # bola.y += velY (Interditado por conta da funcionalidade em manutenção)
+    if not pause:
+        bola.x += velX
+        bola.y += velY
 
     # Desenho de todos os elementos
     cenario.draw()
-    raqueteEsq.draw()
-    raqueteDir.draw()
+    padEsq.draw()
+    padDir.draw()
     bola.draw()
 
     # Reinicialização da janela
